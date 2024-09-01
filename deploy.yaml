@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mysql-deploy
+  name: mysql-deploy
+  namespace: mysql-ns
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-deploy
+
+  template:
+    metadata:
+      labels:
+        app: mysql-deploy
+    spec:
+      containers:
+        - image: ngsharna/login:app
+          name: login-container
+          ports:
+            - containerPort: 5000
+          env:
+            - name: USER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
+
+      restartPolicy: Always
